@@ -1,0 +1,25 @@
+{
+  "name": "shrturl",
+  "version": "1.0.0",
+  "description": "URL shortener",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spot1000/shrturl.git"
+  },
+  "author": "ADam Lichter",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/spot1000/shrturl/issues"
+  },
+  "homepage": "https://github.com/spot1000/shrturl#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "mongodb": "^2.2.19",
+    "pug": "^2.0.0-beta6"
+  }
+}
