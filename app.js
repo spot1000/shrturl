@@ -6,10 +6,11 @@ var path = require('path');
 var mongoose = require ('mongoose');
 require('dotenv').config()
 
+
 var app = express();
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'pug');
 
 mongoose.connect(process.env.url , function(err, db) {
   if (err) {
@@ -21,4 +22,4 @@ mongoose.connect(process.env.url , function(err, db) {
 
 app.listen(port, function() {
   console.log('server established, listening on port: ', port);
-})
+});
