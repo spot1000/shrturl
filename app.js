@@ -2,26 +2,21 @@ var express = require('express');
 var mongodb = require('mongodb');
 var MongoClient = mongodb.MongoClient;
 var port = process.env.PORT || 8080;
+var path = require('path');
+var mongoose = require ('mongoose');
+require('dotenv').config()
 
 var app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-MongoClient.connect("mongodb://adam:yukonho1984@ds111479.mlab.com:11479/shrturl" , function(err, db) {
+mongoose.connect(process.env.url , function(err, db) {
   if (err) {
-    console.log('unable to connect to the MongoDB server. Error:', err)
+    console.log(err);
   } else {
-
-    console.log('Connection establish to monogDB server');
-    var collection = db.collection('shrturls');
+    console.log('connection to DB established');
   }
-});
-
-var collection = db.collection('shrturls');
-
-app.get('/', function(req, res) {
-  collection.find({ })
 })
 
 app.listen(port, function() {
