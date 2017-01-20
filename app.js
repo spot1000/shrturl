@@ -2,6 +2,7 @@ var express = require('express');
 var MongoClient = require('mongodb').MongoClient;
 var port = process.env.PORT || 8080;
 var path = require('path');
+var ObjectId = require('mongodb').ObjectId
 
 require('dotenv').config()
 
@@ -25,23 +26,30 @@ MongoClient.connect(process.env.url , function(err, db) {
   });
 
   app.get("/new/:url", function(req,res) {
-    var linkID = ''
-
+    var linkID = '';
     var httpLink = "http://" + req.params.url;
+
+    collection.find({'url':httpLink}).toArray(function(err, docs) {
+      if (err) {throw err}
+      if (docs.length==0) {
+        collection.insert({'url':httpLink}, function(err,docs) {
+          linkID = docs.ops[0]._id;
+          console.log(linkID);
+        });
+        console.log(httpLink + " successfully added to database");
+      } else {
+        console.log(docs[0].url)
+      }
+    })
     console.log(httpLink);
     console.log(req.params.url);
-    collection.insert({'url':httpLink}, function(err,docs) {
-      linkID = docs.ops[0]._id;
-      console.log(linkID);
-    });
-    console.log(httpLink + " successfully added to database");
 
-    res.send(httpLink);
+    res.send(httpLink + " shortens to " + " placeholder");
   });
 
   app.get('/url/:id', function(req,res) {
-    var id = req.params.id
-    collection.find({"_id":"5881561cb5cd90efc497fb0b"}).toArray(function(err, docs) {
+    var id = ObjectId(req.params.id)
+    collection.find({"_id":id}).toArray(function(err, docs) {
       res.send(docs);
     });
   });
