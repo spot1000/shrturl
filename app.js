@@ -40,9 +40,10 @@ MongoClient.connect(process.env.url , function(err, db) {
   });
 
   app.get('/url/:id', function(req,res) {
-    res.redirect(collection.find({'_id':req.params.id}).toArray(function(err, docs) {
-      console.log(docs[0]);
-    }));
+    var id = req.params.id
+    collection.find({"_id":"5881561cb5cd90efc497fb0b"}).toArray(function(err, docs) {
+      res.send(docs);
+    });
   });
 
   app.listen(port, function() {
