@@ -6,7 +6,7 @@ var http = require('http');
 var url = require('url');
 
 
-require('dotenv').config()
+//require('dotenv').config() removed for deployment
 
 
 var app = express();
