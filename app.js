@@ -27,40 +27,40 @@ MongoClient.connect(process.env.url, function(err, db) {
     app.get("/", function(req, res) {
         res.send('type in /new and an address starting with www on the end of this url');
     });
-    // app.get("/new/:url", function(req, res) {
-    //     var getHost = req.protocol + '://' + req.get('host') + '/new'
-    //     var linkID = '';
-    //     var httpLink = "http://" + req.params.url;
-    //
-    //     collection.find({}).sort({
-    //         'listing': -1
-    //     }).limit(1).toArray(function(err, data) {
-    //         collection.insert({
-    //             'listing': data[0].listing + 1,
-    //             'url': httpLink
-    //         }, function(err, result) {
-    //             if (err) {
-    //                 console.log(err)
-    //             } else {
-    //                 res.send('your new URL is: ' +
-    //                     getHost.slice(0, -3) + 'url/' +
-    //                     (result.ops[0].listing).toString()
-    //                 )
-    //             }
-    //         });
-    //     });
-    //
-    // });
-    //
-    // app.get('/url/:id', function(req, res) {
-    //
-    //     var id = parseInt(req.params.id)
-    //     collection.find({
-    //         'listing': id
-    //     }).toArray(function(err, docs) {
-    //         res.redirect(docs[0].url);
-    //     });
-    // });
+    app.get("/new/:url", function(req, res) {
+        var getHost = req.protocol + '://' + req.get('host') + '/new'
+        var linkID = '';
+        var httpLink = "http://" + req.params.url;
+
+        collection.find({}).sort({
+            'listing': -1
+        }).limit(1).toArray(function(err, data) {
+            collection.insert({
+                'listing': data[0].listing + 1,
+                'url': httpLink
+            }, function(err, result) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    res.send('your new URL is: ' +
+                        getHost.slice(0, -3) + 'url/' +
+                        (result.ops[0].listing).toString()
+                    )
+                }
+            });
+        });
+
+    });
+
+    app.get('/url/:id', function(req, res) {
+
+        var id = parseInt(req.params.id)
+        collection.find({
+            'listing': id
+        }).toArray(function(err, docs) {
+            res.redirect(docs[0].url);
+        });
+    });
 
     app.listen(port, function() {
         console.log('server established, listening on port: ', port);
