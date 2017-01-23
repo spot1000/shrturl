@@ -6,7 +6,7 @@ var http = require('http');
 var url = require('url');
 
 
-//require('dotenv').config() removed for deployment
+require('dotenv').config() //removed for deployment
 
 
 var app = express();
@@ -27,29 +27,41 @@ MongoClient.connect(process.env.url, function(err, db) {
     app.get("/", function(req, res) {
         res.send('type in /new and an address starting with www on the end of this url');
     });
+
     app.get("/new/:url", function(req, res) {
         var getHost = req.protocol + '://' + req.get('host') + '/new'
         var linkID = '';
         var httpLink = "http://" + req.params.url;
 
-        collection.find({}).sort({
-            'listing': -1
-        }).limit(1).toArray(function(err, data) {
+
+        //displays new URL to user once collection find/insert is someplete
+        var showNewUrl = function(err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log('document inserted successfully')
+                res.send('your new URL is: ' +
+                    getHost.slice(0, -3) + 'url/' +
+                    (result.ops[0].listing).toString()
+                )
+            }
+        }
+
+        //inserts a new document using the URL parameter as the desired URL and a listing number as a counter to find it
+        var insertNewDocument = function(err, data) {
             collection.insert({
                 'listing': data[0].listing + 1,
                 'url': httpLink
-            }, function(err, result) {
-                if (err) {
-                    console.log(err)
-                } else {
-                    res.send('your new URL is: ' +
-                        getHost.slice(0, -3) + 'url/' +
-                        (result.ops[0].listing).toString()
-                    )
-                }
-            });
-        });
+            }, showNewUrl);
+        }
 
+        // initiates the find/insert and sorts listing number to be used as shortened URL
+
+
+
+        collection.find({}).sort({
+            'listing': -1
+        }).limit(1).toArray(insertNewDocument);
     });
 
     app.get('/url/:id', function(req, res) {
