@@ -25,7 +25,7 @@ MongoClient.connect(process.env.url, function(err, db) {
     }
 
     app.get("/", function(req, res) {
-        res.send('type in /new and an address starting with www on the end of this url');
+        res.send('type in new/ and an address starting with www on the end of this url');
     });
 
     app.get("/new/:url", function(req, res) {
