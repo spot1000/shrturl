@@ -6,7 +6,7 @@ var http = require('http');
 var url = require('url');
 
 
-//require('dotenv').config() //removed for deployment
+require('dotenv').config() //removed for deployment
 
 
 var app = express();
@@ -32,6 +32,15 @@ MongoClient.connect(process.env.url, function(err, db) {
         var getHost = req.protocol + '://' + req.get('host') + '/new'
         var linkID = '';
         var httpLink = "http://" + req.params.url;
+        var request = http.get(httpLink, function(res) {
+            if (res.statusCode) {
+                // initiates the find/insert and sorts listing number to be used as shortened URL
+                collection.find({}).sort({
+                    'listing': -1
+                }).limit(1).toArray(insertNewDocument);
+            }
+        })
+
 
 
         //displays new URL to user once collection find/insert is someplete
@@ -55,13 +64,10 @@ MongoClient.connect(process.env.url, function(err, db) {
             }, showNewUrl);
         }
 
-        // initiates the find/insert and sorts listing number to be used as shortened URL
-
-
-
-        collection.find({}).sort({
-            'listing': -1
-        }).limit(1).toArray(insertNewDocument);
+        request.on("error", function(error) {
+            res.send('Sorry, we can\'t seem to find that site, please try with a different site')
+            console.error(error.status);
+        });
     });
 
     app.get('/url/:id', function(req, res) {
