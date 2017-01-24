@@ -6,7 +6,7 @@ var http = require('http');
 var url = require('url');
 
 
-require('dotenv').config() //removed for deployment
+//require('dotenv').config() //removed for deployment
 
 
 var app = express();
@@ -16,6 +16,26 @@ var app = express();
 
 MongoClient.connect(process.env.url, function(err, db) {
     var collection = db.collection('shrturls');
+    //displays new URL to user once collection find/insert is someplete
+    var showNewUrl = function(err, result) {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log('document inserted successfully')
+            res.send('your new URL is: ' +
+                getHost.slice(0, -3) + 'url/' +
+                (result.ops[0].listing).toString()
+            )
+        }
+    }
+
+    //inserts a new document using the URL parameter as the desired URL and a listing number as a counter to find it
+    var insertNewDocument = function(err, data) {
+        collection.insert({
+            'listing': data[0].listing + 1,
+            'url': httpLink
+        }, showNewUrl);
+    }
 
 
     if (err) {
@@ -40,29 +60,6 @@ MongoClient.connect(process.env.url, function(err, db) {
                 }).limit(1).toArray(insertNewDocument);
             }
         })
-
-
-
-        //displays new URL to user once collection find/insert is someplete
-        var showNewUrl = function(err, result) {
-            if (err) {
-                console.log(err)
-            } else {
-                console.log('document inserted successfully')
-                res.send('your new URL is: ' +
-                    getHost.slice(0, -3) + 'url/' +
-                    (result.ops[0].listing).toString()
-                )
-            }
-        }
-
-        //inserts a new document using the URL parameter as the desired URL and a listing number as a counter to find it
-        var insertNewDocument = function(err, data) {
-            collection.insert({
-                'listing': data[0].listing + 1,
-                'url': httpLink
-            }, showNewUrl);
-        }
 
         request.on("error", function(error) {
             res.send('Sorry, we can\'t seem to find that site, please try with a different site')
